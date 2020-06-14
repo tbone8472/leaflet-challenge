@@ -24,7 +24,7 @@
          function styleinfo(feature) {
              return {
             radius: getradius(feature.properties.mag),
-            fillColor: getcolor(feature.properties.mag),
+            fillColor: getColor(feature.properties.mag),
             color: "#000",
             weight: 1,
             opacity: 1,
@@ -34,19 +34,21 @@
          function getradius(magnitude){
              return magnitude * 4;
          }
-         function getcolor(magcolor){
-             switch(true){
-                 case magcolor >5:
-                     return "red";
-                 case magcolor >4:
-                     return "blue";
-                 case magcolor >3:
-                     return "orange";
-                 case magcolor >2:
-                     return "purple";
-                 default:
-                     return "white";
-                  }
+         function getColor(magcolor){
+            switch(true){
+                case magcolor >5:
+                    return "red";
+                case magcolor >4:
+                    return "blue";
+                case magcolor >3:
+                    return "orange";
+                case magcolor >2:
+                    return "purple";
+                case magcolor >1:
+                    return "green"
+                default:
+                    return "salmon";
+             }
          }
         L.geoJSON(earthqdata, {
             pointToLayer: function (feature, latlng) {
@@ -56,27 +58,26 @@
             onEachFeature: function(feature,layer){
                 layer.bindPopup("Magnitude"+feature.properties.mag+"<br>location"+feature.properties.place);
             }
-        }).addTo(myMap);
+        }).addTo(myMap)
+
+            
          // The details for the legend
-            legend.onAdd = function() {
-                var div = L.DomUtil.create("div", "info legend");
-    
-                var grades = [0, 1, 2, 3, 4, 5];
-                var colors = [      
-                 "#98ee00",
-                 "#d4ee00",
-                 "#eecc00",
-                 "#ee9c00",
-                 "#ea822c",
-                 "#ea2c2c"
-                ];
-    
-             div.innerHTML +=
-             "<i style='background: " + colors[i] + "'></i> " +
-                grades[i] + (grades[i + 1] ? "–" + grades[i + 1] + "<br>" : "+");
-        }
-        return div;
-});  
-    legend.addTo(myMap);     
+        var legend = L.control({position: 'topright'});
+            legend.onAdd = function (myMap) {    
+            
+            var div = L.DomUtil.create("div", "info legend");
+            var grades = [0,1,2,3,4,5], labels = ["0-1", "1-2", "2-3”, “3-4", "4-5", "5+"];   
+                for (var i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                        '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                }
+                     return div;
+              };
+                legend.addTo(myMap);
+             });   
+          
+             
+        
 
     
